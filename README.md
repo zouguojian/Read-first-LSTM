@@ -5,3 +5,24 @@ please describe the types of problems.
 
 In the training step: open your terminal - python train.py
 In the test step: python test.py
+
+
+Abstract—Accurate air pollutant prediction allows effective environment management to reduce the impact of pollution and prevent pollution incidents. Existing studies of air pollutant prediction are mostly interdisciplinary involving environmental science and computer science where the problem is formulated as time series prediction. A prevalent recent approach to time series prediction is the Encoder-Decoder model, which is based on recurrent neural networks (RNN) such as long short-term memory (LSTM), and great potential has been demonstrated. An LSTM network relies on various gate units, but in most existing studies the correlation between gate units is ignored. This correlation is important for establishing the relationship of the random variables in a time series as the stronger is this correlation, the stronger is the relationship between the random variables. In this paper we propose an improved LSTM, named Read-first LSTM or RLSTM for short, which is a more powerful temporal feature extractor than RNN, LSTM and Gated Recurrent Unit (GRU). RLSTM has some useful properties: (1) enables better store and remember capabilities in longer time series and (2) overcomes the problem of dependency between gate units. Since RLSTM is good at long term feature extraction, it is expected to perform well in time series prediction. Therefore, we use RLSTM as the Encoder and LSTM as the Decoder to build an Encoder-Decoder model (EDSModel)  for pollutant prediction in this paper. Our experimental results show, for 1 to 24 hours prediction, the proposed prediction model performed well with a root mean square error of 30.218. The effectiveness and superiority of RLSTM and the prediction model have been demonstrated. 
+Keywords—encoder-decoder model, recurrent neural networks, long short term memory, air pollutant prediction, deep learning, numerical analysis
+
+
+reference:
+
+[1] Zhang, B. ,  Zou, G. ,  Qin, D. ,  Lu, Y. , &  Wang, H. . (2021). A novel encoder-decoder model based on read-first lstm for air pollutant prediction. Science of The Total Environment, 765(3), 144507.
+
+LaTex:
+
+@article{2021A,
+  title={A novel Encoder-Decoder model based on read-first LSTM for air pollutant prediction},
+  author={ Zhang, B.  and  Zou, G.  and  Qin, D.  and  Lu, Y.  and  Wang, H. },
+  journal={Science of The Total Environment},
+  volume={765},
+  number={3},
+  pages={144507},
+  year={2021},
+}
