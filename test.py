@@ -3,13 +3,13 @@ import pandas as pd
 import trainSet as trainSet
 import testSet as testSet
 import numpy as np
-import RLSTM.Encoder as Encoder
-import RLSTM.encoder_lstm as encoder_lstm
-import RLSTM.Decoder as Decoder
+import Encoder as Encoder
+import encoder_lstm as encoder_lstm
+import Decoder as Decoder
 import matplotlib.pyplot as plt
-import RLSTM.Decoder_lstm as Decoder_lstm
-import RLSTM.encoder_gru as encodet_gru
-import RLSTM.encoder_rnn as encoder_rnn
+import Decoder_lstm as Decoder_lstm
+import encoder_gru as encodet_gru
+import encoder_rnn as encoder_rnn
 import os
 import datetime
 tf.reset_default_graph()
@@ -40,6 +40,7 @@ class train(object):
     def __init__(self,time_size,features,prediction_size):
         self.x_input=tf.placeholder(dtype=tf.float32,shape=[None,time_size,features],name='pollutant')
         self.y=tf.placeholder(dtype=tf.float32,shape=[None,prediction_size])
+
     def trains(self,batch_size,encoder_layer,decoder_layer,encoder_nodes,prediction_size,is_training):
         '''
 
@@ -68,6 +69,7 @@ class train(object):
         # backprocess and update the parameters
         # self.train_op = tf.train.AdamOptimizer(learning_rate).minimize(self.cross_entropy)
         # return self.cross_entropy,self.train_op
+
     def test(self,batch_size,encoder_layer,decoder_layer,encoder_nodes,prediction_size,is_training):
         '''
 
@@ -134,10 +136,10 @@ def begin():
     pre=training.test(1,para.encoder_layer,para.decoder_layer,para.encoder_nodes,para.prediction_size,False)
     saver = tf.train.Saver()
     with tf.Session() as sess:
-        # model_file = tf.train.latest_checkpoint('ckpt/')
+        # model_file = tf.train.latest_checkpoint('rlstmckpt/')
         # saver.restore(sess, model_file)
-        for i in range(40,100):
-            saver.restore(sess, 'ckpt/pollutant.ckpt-'+str(i))
+        for i in range(0,10):
+            saver.restore(sess, 'rlstmckpt/pollutant.ckpt-'+str(i))
             para.batch_size = 1
             para.is_training=False
             # reading for the test sets

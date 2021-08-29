@@ -1,15 +1,15 @@
 import tensorflow as tf
 import pandas as pd
-import RLSTM.trainSet as trainSet
-import RLSTM.testSet as testSet
+import trainSet as trainSet
+import testSet as testSet
 import numpy as np
-import RLSTM.Encoder as Encoder
-import RLSTM.encoder_lstm as encoder_lstm
-import RLSTM.Decoder as Decoder
+import Encoder as Encoder
+import encoder_lstm as encoder_lstm
+import Decoder as Decoder
 import matplotlib.pyplot as plt
-import RLSTM.Decoder_lstm as Decoder_lstm
-import RLSTM.encoder_gru as encodet_gru
-import RLSTM.encoder_rnn as encoder_rnn
+import Decoder_lstm as Decoder_lstm
+import encoder_gru as encodet_gru
+import encoder_rnn as encoder_rnn
 import os
 import datetime
 tf.reset_default_graph()

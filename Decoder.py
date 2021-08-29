@@ -1,4 +1,4 @@
-import RLSTM.Rlstm as lstm
+import Rlstm as lstm
 import tensorflow as tf
 class decoder(object):
     def __init__(self,h_state,batch_size,predict_time,layer_num=1,nodes=128,is_training=True):

@@ -4,7 +4,9 @@ class rlstm(object):
         self.layer_num=layer_num    #the numbers of layer
         self.nodes=nodes            #the numbers of nodes to each layer
         self.is_training=is_training
+	#self.test_state=
     #the funtion of init_state() is used to initialized the state of C and H
+
     def train_state(self,batch_size):
         '''
         it divided train or test
@@ -13,12 +15,14 @@ class rlstm(object):
         with tf.variable_scope(name_or_scope='train_state', reuse=tf.AUTO_REUSE):
             c_state=tf.Variable(tf.zeros(shape=[batch_size,self.nodes],dtype=tf.float32),name='c_state')
             h_state=tf.Variable(tf.zeros(shape=[batch_size,self.nodes],dtype=tf.float32),name='h_state')
+            print('hello1',batch_size,c_state.name)
             return c_state,h_state
 
     def test_state(self,batch_size):
         with tf.variable_scope(name_or_scope='test_state', reuse=tf.AUTO_REUSE):
             c_state = tf.Variable(tf.zeros(shape=[batch_size, self.nodes], dtype=tf.float32),name='c_state')
             h_state = tf.Variable(tf.zeros(shape=[batch_size, self.nodes], dtype=tf.float32),name='h_state')
+            print('hello2',batch_size,c_state.name)
             return c_state, h_state
     def lstm_layer(self,inputs,c_state, h_state):
         '''
@@ -98,9 +102,11 @@ class rlstm(object):
         used to extract the time series features
         '''
         for layer in range(self.layer_num):
+            if self.is_training:
+                c_state, h_state = self.train_state(batch_size)
+            else:
+                c_state, h_state = self.test_state(batch_size)
             with tf.variable_scope(name_or_scope=str(layer),reuse=tf.AUTO_REUSE):
-                if self.is_training:c_state,h_state=self.train_state(batch_size)
-                else:c_state,h_state=self.test_state(batch_size)
                 # c_state, h_state = self.test_state(batch_size)
                 h = []
                 for time in range(input.shape[1]):
