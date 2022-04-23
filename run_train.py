@@ -1,8 +1,6 @@
 # -- coding: utf-8 --
 import tensorflow as tf
 import pandas as pd
-import model.trainSet as trainSet
-import model.testSet as testSet
 import numpy as np
 import model.encoder as encoder
 import model.encoder_lstm as encoder_lstm
@@ -116,8 +114,8 @@ class Model(object):
         for i in range(int((iterate.length * iterate.divide_ratio - (
                 iterate.input_length + iterate.output_length)) // iterate.step)
                        * self.hp.epoch // self.hp.batch_size):
-            self.hp.batch_size = 128
-            self.hp.is_training=True
+            # self.hp.batch_size = 128
+            # self.hp.is_training=True
             x, label = self.sess.run(train_next)
             features = np.reshape(x, [-1, self.hp.input_length, self.hp.features])
             feed_dict = construct_feed_dict(features, label, self.placeholders)
@@ -145,8 +143,6 @@ class Model(object):
             print('the model weights has been loaded:')
             self.saver.restore(self.sess, model_file)
 
-        self.hp.batch_size = 1
-        self.hp.is_training = False
         iterate_test = data_load.DataClass(hp=self.hp)
         test_next = iterate_test.next_batch(batch_size=self.hp.batch_size, epoch=1, is_training=False)
         max, min = iterate_test.max_dict['PM2.5'], iterate_test.min_dict['PM2.5']
@@ -160,8 +156,8 @@ class Model(object):
             feed_dict = construct_feed_dict(features, label, self.placeholders)
             feed_dict.update({self.placeholders['dropout']: 0.0})
             pre = self.sess.run((self.pre), feed_dict=feed_dict)
-            label_list.append(label[:,:self.hp.predict_length])
-            predict_list.append(pre[:,:self.hp.predict_length])
+            label_list.append(label)
+            predict_list.append(pre)
 
         label_list = np.reshape(label_list, [-1, self.hp.predict_length])
         predict_list = np.reshape(predict_list, [-1, self.hp.predict_length])
