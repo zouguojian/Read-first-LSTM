@@ -19,7 +19,7 @@ class rlstm(object):
 
     def test_state(self,batch_size):
         '''
-        :param batch_size: 
+        :param batch_size:
         :return:
         '''
         with tf.variable_scope(name_or_scope='test_state', reuse=tf.AUTO_REUSE):
