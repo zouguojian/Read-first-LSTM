@@ -1,11 +1,10 @@
 import tensorflow as tf
 class rlstm(object):
-    def __init__(self,layer_num=1,nodes=128,is_training=True):
+    def __init__(self,batch_size=64, layer_num=1,nodes=128,is_training=True):
+        self.batch_size=batch_size
         self.layer_num=layer_num    #the numbers of layer
         self.nodes=nodes            #the numbers of nodes to each layer
         self.is_training=is_training
-	#self.test_state=
-    #the funtion of init_state() is used to initialized the state of C and H
 
     def train_state(self,batch_size):
         '''
@@ -19,11 +18,16 @@ class rlstm(object):
             return c_state,h_state
 
     def test_state(self,batch_size):
+        '''
+        :param batch_size: 
+        :return:
+        '''
         with tf.variable_scope(name_or_scope='test_state', reuse=tf.AUTO_REUSE):
             c_state = tf.Variable(tf.zeros(shape=[batch_size, self.nodes], dtype=tf.float32),name='c_state')
             h_state = tf.Variable(tf.zeros(shape=[batch_size, self.nodes], dtype=tf.float32),name='h_state')
             print('hello2',batch_size,c_state.name)
             return c_state, h_state
+
     def lstm_layer(self,inputs,c_state, h_state):
         '''
 
@@ -62,7 +66,7 @@ class rlstm(object):
         it used to update the cell state,C
         and the shape is [batch_size,nodes]
         '''
-        C_hat=tf.layers.dense(inputs=control_data,units=self.nodes,
+        c_hat=tf.layers.dense(inputs=control_data,units=self.nodes,
                                   activation=tf.nn.tanh,kernel_initializer=tf.truncated_normal_initializer(stddev=0.1),
                                   bias_initializer=tf.constant_initializer(0.0),name='c_hate')
 
@@ -71,7 +75,7 @@ class rlstm(object):
         the size is [batch_size,nodes] 
         '''
 
-        self.C=tf.multiply(forget_gate,c_state)+tf.multiply(write,C_hat)
+        self.c=tf.multiply(forget_gate,c_state)+tf.multiply(write,c_hat)
 
         '''
         We can used this formula to achieve the traditional lSTM output, it combine C_hat and control_data
@@ -82,9 +86,9 @@ class rlstm(object):
         #                           bias_initializer=tf.constant_initializer(0.0),name='out')
         # self.H=tf.multiply(O,tf.tanh(self.C))
         #
-        self.H=tf.tanh(self.C)
+        self.h=tf.tanh(self.c)
 
-        return (self.H,self.C)
+        return (self.h,self.c)
 
     def calculate(self,input,batch_size):
         '''

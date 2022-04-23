@@ -5,7 +5,6 @@ import argparse
 from model.hyparameter import parameter
 import pandas as pd
 
-train_file='/Users/guojianzou/Traffic-flow-prediction/MT-STNet/data/train.csv'
 class DataClass(object):
     def __init__(self, hp=None):
         '''
@@ -18,14 +17,14 @@ class DataClass(object):
         self.is_training=hp.is_training           # true or false
         self.divide_ratio=hp.divide_ratio          # the divide between in training set and test set ratio
         self.step=hp.step                         # windows step
-        self.site_num=hp.site_num
         self.file_train_path= hp.file_train
         self.normalize = hp.normalize             # data normalization
 
         self.get_data(self.hp.file_train)
         self.length=self.data.shape[0]                        # data length
         self.get_max_min(self.data)                           # max and min values' dictionary
-        self.normalization(self.data, ['flow'], hp.normalize) # normalization
+        self.normalization(self.data, ['AQI', 'PM2.5', 'PM2.5_24h', 'PM10', 'PM10_24h', 'SO2', 'SO2_24h', 'NO2', 'NO2_24h',
+               'O3', 'O3_24h', 'O3_8h', 'O3_8h_24h', 'CO', 'CO_24h'], hp.normalize) # normalization
 
     def get_data(self, file_path=None):
         '''
@@ -33,6 +32,7 @@ class DataClass(object):
         :return:
         '''
         self.data = pd.read_csv(file_path, encoding='utf-8')
+        self.data.fillna(method='ffill', inplace=True)
         self.shape=self.data.shape
 
     def get_max_min(self,data=None):
@@ -67,18 +67,15 @@ class DataClass(object):
         '''
         data = self.data.values
         if self.is_training:
-            low, high = 0, int(self.shape[0]//self.site_num * self.divide_ratio)
+            low, high = 0, int(self.shape[0] * self.divide_ratio)
         else:
-            low, high = int(self.shape[0]//self.site_num * self.divide_ratio), int(self.shape[0]//self.site_num)
+            low, high = int(self.shape[0] * self.divide_ratio), int(self.shape[0])
 
         while low + self.input_length + self.output_length <= high:
-            label=data[(low + self.input_length) * self.site_num: (low + self.input_length + self.output_length) * self.site_num,-1:]
-            label=np.concatenate([label[i * self.site_num : (i + 1) * self.site_num, :] for i in range(self.output_length)], axis=1)
+            label=data[(low + self.input_length): (low + self.input_length + self.output_length),2:3]
+            label=np.concatenate([label[i : (i + 1), :] for i in range(self.output_length)], axis=1)
 
-            yield (data[low * self.site_num : (low + self.input_length) * self.site_num, 5:6],
-                   data[low * self.site_num : (low + self.input_length + self.output_length) * self.site_num, 2],
-                   data[low * self.site_num : (low + self.input_length + self.output_length) * self.site_num, 3],
-                   data[low * self.site_num : (low + self.input_length + self.output_length) * self.site_num, 4]//5,
+            yield (data[low : (low + self.input_length), 1:],
                    label)
             if self.is_training:
                 low += self.step
@@ -91,18 +88,15 @@ class DataClass(object):
         :param batch_size:
         :param epochs:
         :param is_training:
-        :return: x shape is [batch, input_length*site_num, features];
-                 day shape is [batch, (input_length+output_length)*site_num];
-                 hour shape is [batch, (input_length+output_length)*site_num];
-                 minute shape is [batch, (input_length+output_length)*site_num];
-                 label shape is [batch, output_length*site_num, features]
+        :return: x shape is [batch, input_length, features];
+                 label shape is [batch, output_length, features]
         '''
 
         self.is_training=is_training
-        dataset=tf.data.Dataset.from_generator(self.generator,output_types=(tf.float32, tf.int32, tf.int32, tf.int32, tf.float32))
+        dataset=tf.data.Dataset.from_generator(self.generator,output_types=(tf.float32, tf.float32))
 
         if self.is_training:
-            dataset=dataset.shuffle(buffer_size=int(self.shape[0]//self.hp.site_num * self.divide_ratio-self.input_length-self.output_length)//self.step)
+            dataset=dataset.shuffle(buffer_size=int(self.shape[0] * self.divide_ratio-self.input_length-self.output_length)//self.step)
             dataset=dataset.repeat(count=epoch)
         dataset=dataset.batch(batch_size=batch_size)
         iterator=dataset.make_one_shot_iterator()
