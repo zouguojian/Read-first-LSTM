@@ -3,11 +3,11 @@ import pandas as pd
 import model.trainSet as trainSet
 import model.testSet as testSet
 import numpy as np
-import model.Encoder as Encoder
+import model.encoder as Encoder
 import model.encoder_lstm as encoder_lstm
-import model.Decoder as Decoder
+import model.decoder as Decoder
 import matplotlib.pyplot as plt
-import model.Decoder_lstm as Decoder_lstm
+import model.decoder_lstm as Decoder_lstm
 import model.encoder_gru as encodet_gru
 import model.encoder_rnn as encoder_rnn
 import os
@@ -80,6 +80,7 @@ class train(object):
         # backprocess and update the parameters
         self.train_op = tf.train.AdamOptimizer(learning_rate).minimize(self.cross_entropy)
         return self.cross_entropy,self.train_op
+
     def test(self,batch_size,encoder_layer,decoder_layer,encoder_nodes,prediction_size,is_training):
         '''
 
@@ -103,6 +104,7 @@ class train(object):
         decoder_init=Decoder_lstm.lstm(batch_size,prediction_size,decoder_layer,encoder_nodes,is_training)
         self.pre=decoder_init.decoding(h_state)
         return self.pre
+
     def accuracy(self,Label,Predict,epoch,steps):
         '''
 
@@ -123,6 +125,7 @@ class train(object):
                                   (Predict - np.mean(Predict)))) / (np.std(Predict) * np.std(Label))
         print('The correlation coefficient is: %f' % (cor))
         return average_Error,RMSE_Error,cor
+
     def describe(self,Label,Predict,epoch,prediction_size):
         if epoch == 10 or epoch == 30 or epoch == 50 or epoch == 70 or epoch == 90 or epoch == 100:
             plt.figure()
@@ -178,8 +181,6 @@ def begin():
                 Predict = np.reshape(np.array(Predict), [1, -1])[0]
 
                 average_Error, RMSE_Error, cor=training.accuracy(Label,Predict,epoch,step)
-                # if max_rmse>RMSE_Error:
-                #     max_rmse=RMSE_Error
                 saver.save(sess,save_path='rlstmckpt/pollutant.ckpt',global_step=epoch)
                 training.describe(Label,Predict,epoch,para.prediction_size)
         end_time = datetime.datetime.now()
