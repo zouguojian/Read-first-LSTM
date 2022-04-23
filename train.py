@@ -1,15 +1,15 @@
 import tensorflow as tf
 import pandas as pd
-import trainSet as trainSet
-import testSet as testSet
+import model.trainSet as trainSet
+import model.testSet as testSet
 import numpy as np
-import Encoder as Encoder
-import encoder_lstm as encoder_lstm
-import Decoder as Decoder
+import model.Encoder as Encoder
+import model.encoder_lstm as encoder_lstm
+import model.Decoder as Decoder
 import matplotlib.pyplot as plt
-import Decoder_lstm as Decoder_lstm
-import encoder_gru as encodet_gru
-import encoder_rnn as encoder_rnn
+import model.Decoder_lstm as Decoder_lstm
+import model.encoder_gru as encodet_gru
+import model.encoder_rnn as encoder_rnn
 import os
 import datetime
 tf.reset_default_graph()
