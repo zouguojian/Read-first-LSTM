@@ -74,7 +74,7 @@ class DataClass(object):
         while low + self.input_length + self.output_length <= high:
             label=data[(low + self.input_length): (low + self.input_length + self.output_length),2]
             # label=np.concatenate([label[i : (i + 1), :] for i in range(self.output_length)], axis=1)
-
+            print(data[low : (low + self.input_length), 0])
             yield (data[low : (low + self.input_length), 1:],
                    label)
             if self.is_training:

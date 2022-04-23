@@ -1,2 +1,0 @@
-model_checkpoint_path: "pollutant.ckpt-0"
-all_model_checkpoint_paths: "pollutant.ckpt-0"
